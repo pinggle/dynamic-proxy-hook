@@ -1,6 +1,10 @@
 package com.weishu.upf.dynamic_proxy_hook.app2.hook;
 
+import android.app.Activity;
 import android.app.Instrumentation;
+import android.util.Log;
+
+import com.weishu.upf.dynamic_proxy_hook.app2.MainActivity;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
@@ -11,7 +15,9 @@ import java.lang.reflect.Method;
  */
 public class HookHelper {
 
-    public static void attachContext() throws Exception{
+    private static final String TAG = "HookHelper";
+
+    public static void attachContext() throws Exception {
         // 先获取到当前的ActivityThread对象
         Class<?> activityThreadClass = Class.forName("android.app.ActivityThread");
         Method currentActivityThreadMethod = activityThreadClass.getDeclaredMethod("currentActivityThread");
@@ -28,5 +34,17 @@ public class HookHelper {
 
         // 偷梁换柱
         mInstrumentationField.set(currentActivityThread, evilInstrumentation);
+
+        Log.v(TAG, "DTPrint HOOK (ContextImpl::startActivity) Over");
+    }
+
+    public static void attachActivity(MainActivity activity) throws Exception {
+        Class<?> activityClass = Activity.class;
+        Field mInstrumentation = activityClass.getDeclaredField("mInstrumentation");
+        mInstrumentation.setAccessible(true);
+        Instrumentation base = (Instrumentation) mInstrumentation.get(activity);
+        AppInstrumentation appInstrumentation = new AppInstrumentation(base);
+        mInstrumentation.set(activity, appInstrumentation);
+        Log.v(TAG, "DTPrint HOOK (Activity::startActivity) Over");
     }
 }

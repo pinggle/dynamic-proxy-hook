@@ -11,17 +11,15 @@ import android.util.Log;
 import java.lang.reflect.Method;
 
 /**
- * @author weishu
- * @date 16/1/28
+ * Created by yanping on 16/7/19.
  */
-public class EvilInstrumentation extends Instrumentation {
-
-    private static final String TAG = "EvilInstrumentation";
+public class AppInstrumentation extends Instrumentation {
+    private static final String TAG = "AppInstrumentation";
 
     // ActivityThread中原始的对象, 保存起来
     Instrumentation mBase;
 
-    public EvilInstrumentation(Instrumentation base) {
+    public AppInstrumentation(Instrumentation base) {
         mBase = base;
     }
 
@@ -30,7 +28,7 @@ public class EvilInstrumentation extends Instrumentation {
             Intent intent, int requestCode, Bundle options) {
 
         // Hook之前, XXX到此一游!
-        Log.d(TAG, "\n执行了EvilInstrumentation::startActivity, 参数如下: \n" + "who = [" + who + "], " +
+        Log.d(TAG, "\n执行了AppInstrumentation::startActivity, 参数如下: \n" + "who = [" + who + "], " +
                 "\ncontextThread = [" + contextThread + "], \ntoken = [" + token + "], " +
                 "\ntarget = [" + target + "], \nintent = [" + intent +
                 "], \nrequestCode = [" + requestCode + "], \noptions = [" + options + "]");
@@ -51,4 +49,3 @@ public class EvilInstrumentation extends Instrumentation {
         }
     }
 }
-
